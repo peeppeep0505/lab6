@@ -3,7 +3,8 @@ import ReactDOM from 'react-dom/client';
 import { CssBaseline } from '@mui/material';
 // import FeedbackForm from './FeedbackForm';
 // import ProductExplorer from './ProductExplorer';
-import Lab63App from './lab63/Lab63App';
+// import Lab63App from './lab63/Lab63App';
+import Lab64App from './lab64/Lab64App';
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
@@ -11,6 +12,7 @@ root.render(
     <CssBaseline />
     {/* <FeedbackForm /> */}
     {/* <ProductExplorer /> */}
-    <Lab63App />
+    {/* <Lab63App /> */}
+    <Lab64App />
   </React.StrictMode>,
 );
