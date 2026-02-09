@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   Alert,
   Box,
@@ -20,11 +20,6 @@ const InventoryManager = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [toast, setToast] = useState({ open: false, severity: 'info', msg: '' });
-  const itemsRef = useRef([]);
-
-  useEffect(() => {
-    itemsRef.current = items;
-  }, [items]);
 
   const showToast = (severity, msg) => {
     setToast({ open: true, severity, msg });
@@ -57,7 +52,7 @@ const InventoryManager = () => {
   }, []);
 
   const deleteItem = async (itemId) => {
-    const previousItems = itemsRef.current;
+    const previousItems = [...items];
 
     showToast('info', 'Syncing delete...');
     setItems((prev) => prev.filter((item) => item.id !== itemId));
@@ -71,7 +66,7 @@ const InventoryManager = () => {
   };
 
   const toggleStock = async (itemId) => {
-    const previousItems = itemsRef.current;
+    const previousItems = [...items];
     const targetItem = previousItems.find((item) => item.id === itemId);
 
     if (!targetItem) {
