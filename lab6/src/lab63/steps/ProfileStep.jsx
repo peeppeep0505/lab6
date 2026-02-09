@@ -12,8 +12,20 @@ const ProfileStep = () => {
   const occupation = watch('occupation');
 
   return (
-    <Box>
-      <Typography variant="h6" fontWeight="bold" mb={2}>
+    <Box
+      sx={{
+        p: 2.5,
+        borderRadius: 3,
+        border: '1px solid',
+        borderColor: 'divider',
+        background:
+          'linear-gradient(180deg, rgba(0,150,136,0.08), rgba(0,150,136,0) 45%)',
+      }}
+    >
+      <Typography variant="overline" color="text.secondary" sx={{ letterSpacing: 2 }}>
+        Profile
+      </Typography>
+      <Typography variant="h6" fontWeight={800} sx={{ mt: 0.5, mb: 1.5 }}>
         Step 2: Professional Profile
       </Typography>
 
@@ -22,6 +34,10 @@ const ProfileStep = () => {
         label="Occupation"
         fullWidth
         margin="normal"
+        size="medium"
+        InputProps={{
+          sx: { borderRadius: 2, backgroundColor: 'rgba(255,255,255,0.8)' },
+        }}
         defaultValue=""
         {...register('occupation')}
         error={!!errors.occupation}
@@ -38,6 +54,10 @@ const ProfileStep = () => {
         label="Company"
         fullWidth
         margin="normal"
+        size="medium"
+        InputProps={{
+          sx: { borderRadius: 2, backgroundColor: 'rgba(255,255,255,0.8)' },
+        }}
         {...register('company')}
         error={!!errors.company}
         helperText={errors.company?.message}
@@ -51,6 +71,10 @@ const ProfileStep = () => {
         }
         fullWidth
         margin="normal"
+        size="medium"
+        InputProps={{
+          sx: { borderRadius: 2, backgroundColor: 'rgba(255,255,255,0.8)' },
+        }}
         {...register('githubUrl')}
         error={!!errors.githubUrl}
         helperText={errors.githubUrl?.message}

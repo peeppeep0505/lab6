@@ -10,7 +10,7 @@ import {
   CircularProgress,
   Paper,
 } from '@mui/material';
-import { useForm } from 'react-hook-form';
+import { useForm, Controller } from 'react-hook-form';
 import axios from 'axios';
 
 const FeedbackForm = () => {
@@ -22,8 +22,10 @@ const FeedbackForm = () => {
     register,
     handleSubmit,
     reset,
+    control,
     formState: { errors },
   } = useForm({ mode: 'onBlur' });
+
 
   const onSubmit = async (data) => {
     setIsSubmitting(true);
@@ -31,7 +33,7 @@ const FeedbackForm = () => {
 
     try {
       const res = await axios.post(
-        'https://jsonplaceholder.typicode.com/posts',
+        'https://jsonplaceholder.typicode.co/posts',
         data,
       );
 
@@ -55,9 +57,29 @@ const FeedbackForm = () => {
   };
 
   return (
-    <Paper elevation={4} sx={{ maxWidth: 500, mx: 'auto', mt: 6, p: 4 }}>
-      <Typography variant="h5" fontWeight="bold" mb={3}>
-        Customer Feedback
+    <Paper
+      elevation={0}
+      sx={{
+        maxWidth: 560,
+        mx: 'auto',
+        mt: 6,
+        p: 4,
+        borderRadius: 4,
+        border: '1px solid',
+        borderColor: 'divider',
+        background:
+          'linear-gradient(180deg, rgba(25,118,210,0.08), rgba(25,118,210,0) 40%)',
+        boxShadow: '0 12px 30px rgba(0,0,0,0.08)',
+      }}
+    >
+      <Typography variant="overline" color="text.secondary" sx={{ letterSpacing: 2 }}>
+        Customer Care
+      </Typography>
+      <Typography variant="h5" fontWeight={700} sx={{ mt: 0.5 }}>
+        Tell us about your experience
+      </Typography>
+      <Typography variant="body2" color="text.secondary" sx={{ mt: 1, mb: 3 }}>
+        Your feedback helps us improve our service quality.
       </Typography>
 
       <Box component="form" onSubmit={handleSubmit(onSubmit)} noValidate>
@@ -66,6 +88,11 @@ const FeedbackForm = () => {
           label="Full Name"
           fullWidth
           margin="normal"
+          size="medium"
+          variant="outlined"
+          InputProps={{
+            sx: { borderRadius: 2, backgroundColor: 'rgba(255,255,255,0.8)' },
+          }}
           {...register('fullName', {
             required: 'กรุณากรอกชื่อ-นามสกุล',
             pattern: {
@@ -82,6 +109,11 @@ const FeedbackForm = () => {
           label="Email"
           fullWidth
           margin="normal"
+          size="medium"
+          variant="outlined"
+          InputProps={{
+            sx: { borderRadius: 2, backgroundColor: 'rgba(255,255,255,0.8)' },
+          }}
           {...register('email', {
             required: 'กรุณากรอกอีเมล',
             pattern: {
@@ -94,23 +126,34 @@ const FeedbackForm = () => {
         />
 
         {/* Category */}
-        <TextField
-          select
-          label="Category"
-          fullWidth
-          margin="normal"
+        <Controller
+          name="category"
+          control={control}
           defaultValue=""
-          {...register('category', {
-            required: 'กรุณาเลือกประเภท',
-          })}
-          error={!!errors.category}
-          helperText={errors.category?.message}
-        >
-          <MenuItem value="">Select...</MenuItem>
-          <MenuItem value="bug">Bug Report</MenuItem>
-          <MenuItem value="suggestion">Suggestion</MenuItem>
-          <MenuItem value="inquiry">General Inquiry</MenuItem>
-        </TextField>
+          rules={{ required: 'กรุณาเลือกประเภท' }}
+          render={({ field }) => (
+            <TextField
+              select
+              label="Category"
+              fullWidth
+              margin="normal"
+              size="medium"
+              variant="outlined"
+              InputProps={{
+                sx: { borderRadius: 2, backgroundColor: 'rgba(255,255,255,0.8)' },
+              }}
+              {...field}
+              error={!!errors.category}
+              helperText={errors.category?.message}
+            >
+              <MenuItem value="">Select...</MenuItem>
+              <MenuItem value="bug">Bug Report</MenuItem>
+              <MenuItem value="suggestion">Suggestion</MenuItem>
+              <MenuItem value="inquiry">General Inquiry</MenuItem>
+            </TextField>
+          )}
+        />
+
 
         {/* Message */}
         <TextField
@@ -119,6 +162,11 @@ const FeedbackForm = () => {
           rows={4}
           fullWidth
           margin="normal"
+          size="medium"
+          variant="outlined"
+          InputProps={{
+            sx: { borderRadius: 2, backgroundColor: 'rgba(255,255,255,0.8)' },
+          }}
           {...register('message', {
             required: 'กรุณากรอกข้อความ',
             minLength: {
@@ -139,7 +187,15 @@ const FeedbackForm = () => {
           variant="contained"
           fullWidth
           disabled={isSubmitting}
-          sx={{ mt: 2, py: 1.2 }}
+          sx={{
+            mt: 2.5,
+            py: 1.3,
+            borderRadius: 2,
+            textTransform: 'none',
+            fontWeight: 700,
+            letterSpacing: 0.3,
+            boxShadow: '0 10px 20px rgba(25,118,210,0.25)',
+          }}
         >
           {isSubmitting ? (
             <CircularProgress size={24} color="inherit" />
@@ -151,7 +207,7 @@ const FeedbackForm = () => {
 
       {/* Server Response */}
       {serverResponse && (
-        <Alert severity="success" sx={{ mt: 3 }}>
+        <Alert severity="success" sx={{ mt: 3, borderRadius: 2 }}>
           <Typography variant="subtitle2">Server Response</Typography>
           <pre style={{ fontSize: 12 }}>
             {JSON.stringify(serverResponse, null, 2)}
@@ -165,7 +221,7 @@ const FeedbackForm = () => {
         autoHideDuration={3000}
         onClose={() => setToast({ ...toast, open: false })}
       >
-        <Alert severity={toast.type} variant="filled">
+        <Alert severity={toast.type} variant="filled" sx={{ borderRadius: 2 }}>
           {toast.msg}
         </Alert>
       </Snackbar>

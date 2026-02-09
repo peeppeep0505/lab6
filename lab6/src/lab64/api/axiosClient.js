@@ -27,7 +27,11 @@ api.interceptors.response.use(
     config.__retryCount += 1;
     await sleep(400 * config.__retryCount);
 
-    return api.request(config);
+    try {
+      return await api.request(config);
+    } catch (retryError) {
+      return Promise.reject(retryError);
+    }
   },
 );
 

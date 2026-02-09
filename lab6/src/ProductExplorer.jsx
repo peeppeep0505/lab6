@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import axios from 'axios';
 import debounce from 'lodash.debounce';
 import {
@@ -16,11 +16,28 @@ import {
   CircularProgress,
 } from '@mui/material';
 
+const ProductCardSkeleton = () => {
+  return (
+    <Card sx={{ borderRadius: 2 }}>
+      <Skeleton variant="rectangular" height={160} />
+      <CardContent sx={{ pt: 1.5 }}>
+        <Skeleton variant="rounded" height={24} width={90} sx={{ mb: 1 }} />
+        <Skeleton height={22} sx={{ mb: 0.5 }} />
+        <Skeleton height={20} width="45%" />
+      </CardContent>
+    </Card>
+  );
+};
+
 const ProductExplorer = () => {
   const [products, setProducts] = useState([]);
   const [searchTerm, setSearchTerm] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
+
+  const handleRetry = () => {
+    fetchProducts(searchTerm.trim());
+  };
 
   const fetchProducts = async (query = '') => {
     setLoading(true);
@@ -33,8 +50,9 @@ const ProductExplorer = () => {
 
       const res = await axios.get(url);
       setProducts(res.data.products);
-    } catch (err) {
+    } catch {
       setError('Failed to fetch products. Please try again.');
+      setProducts([]);
     } finally {
       setLoading(false);
     }
@@ -81,44 +99,51 @@ const ProductExplorer = () => {
         )}
       </Box>
 
-      {/* Error State */}
-      {error && (
-        <Alert severity="error" sx={{ mb: 3 }}>
-          {error}
-          <Button
-            size="small"
-            onClick={() => fetchProducts(searchTerm)}
-            sx={{ ml: 2 }}
-          >
-            Retry
-          </Button>
-        </Alert>
-      )}
+      {/* C4: Error State + Retry */}
+      {/* C4: Error State + Retry */}
+  {error && (
+    <Alert
+      severity="error"
+      sx={{ mb: 3, alignItems: 'center' }}
+      action={
+        <Button
+          size="small"
+          variant="outlined"
+          onClick={handleRetry}
+          disabled={loading}
+          sx={{ textTransform: 'none' }}
+        >
+          Retry
+        </Button>
+      }
+    >
+      {error}
+    </Alert>
+  )}
 
       {/* Product Grid */}
       <Grid container spacing={3}>
         {loading ? (
-          // Skeleton Loading
-          Array.from(new Array(8)).map((_, idx) => (
-            <Grid item xs={12} sm={6} md={3} key={idx}>
-              <Skeleton variant="rectangular" height={200} />
-              <Skeleton />
-              <Skeleton width="60%" />
+          Array.from({ length: 8 }).map((_, idx) => (
+            <Grid item xs={12} sm={6} md={3} key={`sk-${idx}`}>
+              <ProductCardSkeleton />
             </Grid>
           ))
         ) : products.length > 0 ? (
           products.map((item) => (
             <Grid item xs={12} sm={6} md={3} key={item.id}>
-              <Card>
+              <Card sx={{ borderRadius: 2, height: '100%' }}>
                 <CardMedia
                   component="img"
                   height="160"
                   image={item.thumbnail}
                   alt={item.title}
+                  loading="lazy"
+                  sx={{ objectFit: 'cover' }}
                 />
                 <CardContent>
                   <Chip label={item.category} size="small" sx={{ mb: 1 }} />
-                  <Typography fontWeight="bold" noWrap>
+                  <Typography fontWeight="bold" noWrap title={item.title}>
                     {item.title}
                   </Typography>
                   <Typography color="primary" fontWeight="bold">
@@ -129,11 +154,17 @@ const ProductExplorer = () => {
             </Grid>
           ))
         ) : (
-          // Empty State
           <Grid item xs={12}>
-            <Typography textAlign="center" color="text.secondary" mt={6}>
-              No products found for "{searchTerm}"
-            </Typography>
+            <Box mt={6} textAlign="center">
+              <Typography color="text.secondary">
+                No products found for "{searchTerm}"
+              </Typography>
+              {searchTerm.trim() && (
+                <Button sx={{ mt: 2 }} variant="outlined" onClick={() => setSearchTerm('')}>
+                  Clear Search
+                </Button>
+              )}
+            </Box>
           </Grid>
         )}
       </Grid>
